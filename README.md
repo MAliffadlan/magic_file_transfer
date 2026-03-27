@@ -1,92 +1,154 @@
 <div align="center">
-  <img src="icon-512.png" width="120" alt="Magic Send Icon" style="border-radius: 20px; box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);" />
-  <h1>🪄 Magic Send v2 - *The Seamless Spell*</h1>
-  <p><b>Pindahkan file dari Smartphone Android langsung ke Desktop secepat kilat dengan Gerakan Tangan Sihir (AI Hand Gestures).</b></p>
+  <img src="icon-512.png" width="120" alt="Fadlan Send Icon" />
+  <h1>🪄 Fadlan Send</h1>
+  <p><b>Transfer file dari HP Android ke Laptop Linux dalam sekejap mata — cukup dengan gerakan tangan.</b></p>
 
-  [![Python](https://img.shields.io/badge/Python-3.8%2B-blue?style=for-the-badge&logo=python)](https://python.org)
-  [![Flask](https://img.shields.io/badge/Flask-Server-black?style=for-the-badge&logo=flask)](https://flask.palletsprojects.com/)
-  [![Google MediaPipe](https://img.shields.io/badge/Google-MediaPipe-orange?style=for-the-badge&logo=google)](https://mediapipe.dev/)
-  [![PWA Ready](https://img.shields.io/badge/PWA-Ready-green?style=for-the-badge&logo=pwa)](https://web.dev/progressive-web-apps/)
+  [![Python](https://img.shields.io/badge/Python-3.8+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+  [![Flask](https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
+  [![MediaPipe](https://img.shields.io/badge/MediaPipe-AI-FF6F00?style=for-the-badge&logo=google&logoColor=white)](https://mediapipe.dev/)
+  [![PWA](https://img.shields.io/badge/PWA-Ready-5A0FC8?style=for-the-badge&logo=pwa&logoColor=white)](https://web.dev/progressive-web-apps/)
 </div>
 
 ---
 
-## ⚡ Fitur Utama yang Gila-gilaan Keren
+## ⚡ Kenapa Fadlan Send?
 
-*   📲 **Integrasi Native PWA Android**: Masuk langsung ke menu "Share" bawaan HP. Ngga pusing mikirin IP/Browser lagi!
-*   🤖 **Smart AI Hand Tracking v2**: Mendeteksi 4 jari Anda dengan presisi. Dilengkapi fitur *Anti-False Trigger*, *Cooldown*, dan *Hold Duration*. (Powered by Google MediaPipe)
-*   🎶 **Sihir Interaktif (UX Engine)**: Rasakan getaran (Haptic Feedback), suara "ngung-ngung" Synth Wave saat mulai Charge Sihir, dan animasi terbang langsung di browser Anda.
-*   💻 **Auto-Open di Desktop**: Lempar foto? Langsung buka otomatis! Lempar video? Langsung play tanpa basa-basi! (Via `xdg-open` di Linux)
-*   🔔 **Notifikasi Desktop OS**: PC Anda langsung merespon seketika dari sudut layar.
-*   🕵️‍♂️ **Spy Mode UI Terlarang**: Antarmuka *Dark Mode* mewah tapi kameranya *hidden*. Anda dikira lagi pegang remote ajaib, padahal ada AI yang ngintip pergerakan jari Anda.
+Bosan colok kabel USB? Males buka WhatsApp Web cuma buat kirim satu foto? **Fadlan Send** hadir sebagai solusi transfer file yang *benar-benar* ajaib:
 
----
+> Pilih foto di Galeri → Share ke Fadlan Send → Kepal tangan ✊ → Buka jari 🖐️ → **BAM!** File langsung muncul di layar laptop.
 
-## 🛠️ Persyaratan Tempur
-
-1.  **Laptop / Desktop Linux Mint / Ubuntu (Sebagai Penerima/Server)**
-    *   Python 3.8+
-    *   Satu Jaringan Wi-Fi (Atau jalankan `cloudflared`)
-    *   Fitur `notify-send` & `xdg-open` (Bawaan Linux).
-2.  **Smartphone Android (Tongkat Sihirnya)**
-    *   Google Chrome versi modern (76+)
-    *   Kamera Depan Normal.
+Tidak ada kabel. Tidak ada login. Tidak ada aplikasi berat. Cukup **tangan kosong**.
 
 ---
 
-## 🚀 Instalasi: Semudah Menjentikkan Jari
+## 🌟 Fitur
 
-### Tahap 1: Mantra di Laptop
+### 🤖 Smart AI Gesture Engine v2
+- Deteksi **4 jari sekaligus** (telunjuk, tengah, manis, kelingking) untuk kepalan yang presisi
+- **Anti False Trigger** — harus terdeteksi 8 frame berturut-turut
+- **Hold Duration** — tangan harus digenggam minimal 1 detik sebelum bisa dilempar
+- **Cooldown 3 detik** — mencegah pengiriman ganda yang tidak disengaja
+- **Open Validation** — buka tangan harus stabil 5 frame sebelum dianggap sah
 
-Unduh (*clone*) kode sihir misterius ini ke Linux Anda:
+### 📲 Native Android Share Integration (PWA)
+- Terinstall seperti aplikasi biasa di Home Screen HP
+- Muncul langsung di menu **"Bagikan"** bawaan Android (sebelahan sama WhatsApp, Telegram, dll)
+- File langsung tertangkap server tanpa perlu pilih ulang
+
+### 🎶 Immersive UX Feedback
+- **Sound Effects** — suara synth yang disintesis langsung di browser via Web Audio API (tanpa file audio!)
+  - *Wush* saat mulai menggenggam
+  - *Tiim* saat genggaman terkunci (armed) 
+  - *Ziuung* saat melempar
+  - *Ting-ting* saat berhasil mendarat
+- **Haptic Vibration** — HP bergetar sesuai tahapan gesture
+- **Flying Animation** — ikon 📄 terbang meluncur keluar layar saat file dilempar
+
+### 💻 Auto-Open di Desktop
+File yang mendarat di laptop **langsung terbuka otomatis** dengan aplikasi default:
+
+| Jenis File | Dibuka Dengan |
+|:---:|:---:|
+| 📸 Foto | Image Viewer |
+| 🎬 Video | Video Player |
+| 📄 PDF | Document Reader |
+| 🎵 Audio | Music Player |
+| 📝 Teks | Text Editor |
+
+### 🔔 Desktop Notification
+Notifikasi OS muncul instan di sudut layar laptop setiap kali file berhasil diterima.
+
+### 🕵️ Hidden Camera Mode
+Kamera aktif di latar belakang tapi **tidak terlihat di UI** sama sekali. Tampilannya bersih, hanya kotak instruksi bergaris putus-putus yang elegan.
+
+---
+
+## 🛠️ Kebutuhan Sistem
+
+**Laptop / Desktop (Penerima)**
+- Python 3.8+
+- Linux (Mint / Ubuntu / Debian) — untuk `notify-send` & `xdg-open`
+- Satu jaringan Wi-Fi dengan HP
+
+**Smartphone Android (Pengirim)**
+- Google Chrome 76+
+- Kamera depan yang berfungsi
+
+---
+
+## 🚀 Instalasi
+
+### 1. Clone & Install
 
 ```bash
 git clone https://github.com/MAliffadlan/magic_file_transfer.git
 cd magic_file_transfer
-```
-
-Install bahan baku ramuan:
-
-```bash
 pip install -r requirements.txt
 ```
 
-Nyalakan mesin penangkap sihir:
+### 2. Jalankan Server
 
 ```bash
 python3 receiver.py
 ```
 
-### Tahap 2: Buat Lingkaran Sihir Online (HTTPS PWA)
-Agar ilmu hitam *(Service Worker)* ini lolos ke HP tanpa diblok keamanan Chrome, sambungkan Laptop ke lorong internet publik pakai [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/downloads/):
+### 3. Buat Tunnel HTTPS (Wajib untuk PWA)
 
-Jalankan perintah ini di tab terminal sampingnya:
+PWA di Android **membutuhkan HTTPS**. Gunakan [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/):
+
 ```bash
 cloudflared tunnel --url http://127.0.0.1:5050
 ```
-*(Copy URL `https://xxxx.trycloudflare.com` yang dikasih ya!)*
 
-### Tahap 3: Pemasangan Tongkat di Android
-1.  Buka Link Tadi dari HP.
-2.  Akan muncul tombol **📲 Install Aplikasi**. Pencet dan tunggu.
-3.  Sekarang aplikasi "Magic v2" sudah bertengger gagah di *App Drawer* HP Anda!
+Catat URL `https://xxxx.trycloudflare.com` yang muncul.
 
----
+### 4. Install di HP Android
 
-## 🪄 Kelas Praktik Sihir 101
-
-1. Buka **Galeri** (Foto/Video Favorit) di HP Android Anda.
-2. Centang file yang ingin dikirim, tap tombol **Bagikan (Share)**.
-3. Cari **Magic v2** dari deretan aplikasi (sebelahan sama WhatsApp/IG).
-4. Layar PWA akan menyambut dengan warna Hijau (Tanda file sudah tertangkap rohani-nya).
-5. **JURUS RAHASIA: Arahkan layar HP ke muka Anda, lalu pada kamera depan...**
-    *   **✊ Charge (Genggam Erat):** Layar merespon, HP bergetar tipis, speaker bunyi *wuzzz*. Tahan 1 detik sampai siap.
-    *   **🖐️ Lontarkan Jari (Buka Tangan Mendadak):** Suara mendesing, Animasi file terbang melesat di layar HP Anda!
-6. **BAM!** File sukses tertransfer instan ke PC Anda, Notifikasi Desktop muncul, dan filenya langsung terbuka tanpa disentuh! 😱
+1. Buka link Cloudflare di Chrome HP
+2. Tap tombol **📲 Install Aplikasi**
+3. **Fadlan Send** kini ada di Home Screen!
 
 ---
 
-### Momen "Wah" (WOW Factor):
-Bukan sembarang file transfer, proyek ini fokus totalitas di *User Experience*. Mulai dari *Micro-animations* (animasi dashed-line berkedip saat siap), *Auditory Feedback* (tanpa file audio sama sekali - murni disintetis oleh Web Audio API `AudioContext`), sampai taktil getar saat jari bergerak. Semuanya bikin sistem transfer sepele jadi terasa hidup.
+## 🪄 Cara Pakai
 
-> Dirakit penuh ambisi dan tanpa tidur oleh **@MAliffadlan (Bos Alif)**. Bintangnya GitHub jangan dilupa Bos! ⭐
+```
+1. Buka Galeri → Pilih foto/video
+2. Tap "Bagikan" → Pilih "Fadlan Send"
+3. Layar hijau berkedip = file sudah siap
+4. Kepalkan tangan ✊ di depan kamera → Tahan 1 detik
+5. Status berubah "SIAP DILEMPAR!" 🔥
+6. Buka jari lebar 🖐️ → File terbang ke laptop!
+7. File langsung terbuka otomatis di layar laptop 🎉
+```
+
+---
+
+## 📁 Struktur Proyek
+
+```
+fadlan-send/
+├── receiver.py          # Server Flask (penerima file)
+├── templates/
+│   └── index.html       # Web UI + MediaPipe + Gesture Engine
+├── manifest.json        # PWA manifest (Share Target)
+├── sw.js                # Service Worker
+├── icon-192.png         # App icon 192x192
+├── icon-512.png         # App icon 512x512
+├── requirements.txt     # Python dependencies
+└── .gitignore
+```
+
+---
+
+## ⚠️ Catatan Penting
+
+- URL Cloudflare Tunnel bersifat **sementara** — berubah setiap restart. Setelah restart tunnel, **hapus & install ulang** aplikasi di HP.
+- Untuk URL permanen, gunakan [Cloudflare Named Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/get-started/).
+- Jika tampilan tidak berubah setelah update, clear cache browser atau reinstall PWA.
+
+---
+
+<div align="center">
+  <sub>Dibuat dengan ☕ dan begadang oleh <a href="https://github.com/MAliffadlan"><b>@MAliffadlan</b></a></sub>
+</div>
