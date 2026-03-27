@@ -28,6 +28,14 @@ def show_notification(filename):
     except Exception as e:
         print(f"[-] Gagal menampilkan notifikasi desktop: {e}")
 
+def open_file(filepath):
+    """Membuka file otomatis dengan aplikasi default Linux"""
+    try:
+        subprocess.Popen(['xdg-open', filepath])
+        print(f"[👁️] File dibuka otomatis: {os.path.basename(filepath)}")
+    except Exception as e:
+        print(f"[-] Gagal membuka file: {e}")
+
 def get_local_ip():
     """Mendapatkan IP Address lokal untuk diakses dari HP"""
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -128,6 +136,7 @@ def throw_pending(file_id):
 
     print(f"\n[🚀] FILE BERHASIL DILEMPAR: {filename}")
     show_notification(filename)
+    open_file(final_path)
 
     return jsonify({'message': 'File berhasil mendarat di laptop!', 'filename': filename}), 200
 
@@ -156,6 +165,7 @@ def upload_file():
     file.save(filepath)
     print(f"\n[+] File ditangkap dengan selamat: {filename}")
     show_notification(filename)
+    open_file(filepath)
 
     return jsonify({"message": "File berhasil diluncurkan ke laptop!", "filename": filename}), 200
 
