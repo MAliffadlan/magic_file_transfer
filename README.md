@@ -1,7 +1,7 @@
 <div align="center">
   <img src="icon-512.png" width="120" alt="Fadlan Send Icon" />
   <h1>🪄 Fadlan Send</h1>
-  <p><b>Transfer file dari HP Android ke Laptop Linux dalam sekejap mata — cukup dengan gerakan tangan.</b></p>
+  <p><b>Transfer file dari HP Android ke Laptop dalam sekejap mata — cukup dengan gerakan tangan.</b></p>
 
   [![Python](https://img.shields.io/badge/Python-3.8+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
   [![Flask](https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
