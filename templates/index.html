@@ -337,8 +337,23 @@
 
         let fileToUpload = null;
         let pendingFileId = null;
-        let isFistGrabbed = false;
         let isUploading = false;
+
+        // ========== SMART GESTURE ENGINE v2 ==========
+        const GESTURE_CONFIG = {
+            FIST_THRESHOLD: 1.25,       // Threshold lebih ketat (dulu 1.4)
+            HOLD_DURATION_MS: 1000,     // Harus genggam minimal 1 detik
+            COOLDOWN_MS: 3000,          // Jeda 3 detik setelah lempar
+            MIN_CONSECUTIVE: 8,         // Harus terdeteksi 8 frame berturut-turut
+            OPEN_CONSECUTIVE: 5,        // Buka tangan harus stabil 5 frame
+        };
+
+        let fistFrameCount = 0;         // Counter frame genggam berturut-turut
+        let openFrameCount = 0;         // Counter frame buka berturut-turut
+        let fistConfirmed = false;      // Genggaman sudah dikonfirmasi (lolos MIN_CONSECUTIVE)
+        let fistGrabTime = 0;           // Waktu mulai genggam (ms)
+        let throwArmed = false;         // Genggaman sudah cukup lama, siap lempar
+        let lastThrowTime = 0;          // Waktu terakhir lempar (untuk cooldown)
 
         function updateStatus(text, color) {
             statusBar.innerText = text;
@@ -362,12 +377,11 @@
                 .then(data => {
                     if (data.found) {
                         pendingFileId = pendingId;
-                        // Ubah tampilan zone
                         gestureSteps.style.display = 'none';
                         fileInfo.style.display = 'block';
                         fileName.innerText = data.filename;
                         setZoneState('file-ready', '✊', 'Genggam & Lempar!');
-                        updateStatus('✅ File siap! Genggam tangan lalu buka untuk melempar', '#22c55e');
+                        updateStatus('✅ File siap! Genggam tangan minimal 1 detik, lalu buka untuk melempar', '#22c55e');
                     }
                 })
                 .catch(err => updateStatus('Gagal memuat file: ' + err, '#ef4444'));
@@ -382,11 +396,11 @@
                 fileInfo.style.display = 'block';
                 fileName.innerText = fileToUpload.name;
                 setZoneState('file-ready', '✊', 'Genggam & Lempar!');
-                updateStatus('📎 File dipilih! Kepalkan tangan lalu buka', '#eab308');
+                updateStatus('📎 File dipilih! Genggam tangan 1 detik lalu buka', '#eab308');
             }
         });
 
-        // ========== Gesture Detection ==========
+        // ========== SMART Gesture Detection ==========
         function calcDistance(p1, p2) {
             return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
         }
@@ -394,27 +408,68 @@
         function detectGesture(landmarks) {
             if ((!fileToUpload && !pendingFileId) || isUploading) return;
 
+            // Cooldown check: jangan terima gesture kalau baru saja lempar
+            const now = Date.now();
+            if (now - lastThrowTime < GESTURE_CONFIG.COOLDOWN_MS) return;
+
             const wrist = landmarks[0];
             const palmBase = landmarks[9];
             const indexTip = landmarks[8];
             const middleTip = landmarks[12];
+            const ringTip = landmarks[16];    // Ujung jari manis
+            const pinkyTip = landmarks[20];   // Ujung kelingking
 
-            const distIndex = calcDistance(wrist, indexTip);
-            const distMiddle = calcDistance(wrist, middleTip);
             const palmSize = calcDistance(wrist, palmBase);
 
-            const isFist = (distIndex < palmSize * 1.4) && (distMiddle < palmSize * 1.4);
+            // Cek SEMUA 4 jari (bukan cuma 2) - lebih akurat mendeteksi kepalan sejati
+            const distIndex = calcDistance(wrist, indexTip);
+            const distMiddle = calcDistance(wrist, middleTip);
+            const distRing = calcDistance(wrist, ringTip);
+            const distPinky = calcDistance(wrist, pinkyTip);
+
+            const threshold = palmSize * GESTURE_CONFIG.FIST_THRESHOLD;
+            const isFist = (distIndex < threshold) && (distMiddle < threshold) 
+                        && (distRing < threshold) && (distPinky < threshold);
 
             if (isFist) {
-                if (!isFistGrabbed) {
-                    isFistGrabbed = true;
-                    setZoneState('grabbing', '✊', 'Tergenggam! Buka tangan...');
-                    updateStatus('✊ TERGENGGAM! Buka tangan untuk melempar!', '#3b82f6');
+                fistFrameCount++;
+                openFrameCount = 0; // Reset open counter
+
+                // Tahap 1: Validasi consecutive frames
+                if (!fistConfirmed && fistFrameCount >= GESTURE_CONFIG.MIN_CONSECUTIVE) {
+                    fistConfirmed = true;
+                    fistGrabTime = now;
+                    setZoneState('grabbing', '✊', 'Tahan genggaman...');
+                    updateStatus('✊ Terdeteksi! Tahan genggaman 1 detik...', '#3b82f6');
                 }
+
+                // Tahap 2: Cek hold duration
+                if (fistConfirmed && !throwArmed && (now - fistGrabTime >= GESTURE_CONFIG.HOLD_DURATION_MS)) {
+                    throwArmed = true;
+                    setZoneState('grabbing', '✊', 'SIAP! Buka tangan sekarang!');
+                    updateStatus('🔥 SIAP DILEMPAR! Buka tangan sekarang! 🖐️', '#f97316');
+                }
+
             } else {
-                if (isFistGrabbed) {
-                    isFistGrabbed = false;
+                // Tangan terbuka
+                openFrameCount++;
+
+                if (throwArmed && openFrameCount >= GESTURE_CONFIG.OPEN_CONSECUTIVE) {
+                    // Genggaman sudah dikonfirmasi + ditahan cukup lama + tangan dibuka stabil
+                    // LEMPAR!
+                    throwArmed = false;
+                    fistConfirmed = false;
+                    fistFrameCount = 0;
+                    openFrameCount = 0;
+                    lastThrowTime = now;
                     executeMagicThrow();
+                } else if (!throwArmed) {
+                    // Tangan dibuka tapi belum armed — reset
+                    fistConfirmed = false;
+                    fistFrameCount = 0;
+                    if (fileToUpload || pendingFileId) {
+                        setZoneState('file-ready', '✊', 'Genggam & Lempar!');
+                    }
                 }
             }
         }
