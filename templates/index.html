@@ -116,6 +116,70 @@
             z-index: 100;
         }
 
+        /* ===== Magic Particle Explosion ===== */
+        .magic-particle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 99;
+            animation: particleBurst var(--duration) cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+        @keyframes particleBurst {
+            0% { 
+                transform: translate(-50%, -50%) translate(0, 0) scale(1); 
+                opacity: 1; 
+            }
+            60% { 
+                opacity: 0.8; 
+            }
+            100% { 
+                transform: translate(-50%, -50%) translate(var(--tx), var(--ty)) scale(0); 
+                opacity: 0; 
+            }
+        }
+
+        /* ===== Sparkle Trail (Rising Glitter) ===== */
+        .sparkle {
+            position: absolute;
+            pointer-events: none;
+            z-index: 98;
+            font-size: 16px;
+            animation: sparkleRise var(--duration) ease-out forwards;
+        }
+        @keyframes sparkleRise {
+            0% { 
+                transform: translateY(0) scale(1) rotate(0deg); 
+                opacity: 1; 
+            }
+            100% { 
+                transform: translateY(var(--rise)) scale(0.3) rotate(var(--rot)); 
+                opacity: 0; 
+            }
+        }
+
+        /* ===== Shockwave Ring ===== */
+        .shockwave {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.6);
+            transform: translate(-50%, -50%) scale(1);
+            pointer-events: none;
+            z-index: 97;
+            animation: shockwaveExpand 0.6s ease-out forwards;
+        }
+        @keyframes shockwaveExpand {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; border-width: 3px; }
+            100% { transform: translate(-50%, -50%) scale(12); opacity: 0; border-width: 0.5px; }
+        }
+
         /* ===== Instruksi di dalam Zone ===== */
         .gesture-title {
             font-size: 1.1em;
@@ -427,11 +491,66 @@
         }
 
         function createFlyingAnimation() {
+            const zone = document.getElementById('gestureZone');
+
+            // 1. Flying file icon
             const el = document.createElement('div');
             el.innerText = '📄';
             el.className = 'flying-file';
-            document.getElementById('gestureZone').appendChild(el);
+            zone.appendChild(el);
             setTimeout(() => el.remove(), 800);
+
+            // 2. Shockwave ring
+            const ring = document.createElement('div');
+            ring.className = 'shockwave';
+            zone.appendChild(ring);
+            setTimeout(() => ring.remove(), 700);
+
+            // 3. Particle burst (30 particles)
+            const colors = ['#FFD700', '#00E5FF', '#FF4081', '#FFFFFF', '#B388FF', '#69F0AE'];
+            for (let i = 0; i < 30; i++) {
+                const p = document.createElement('div');
+                p.className = 'magic-particle';
+                const angle = (Math.PI * 2 / 30) * i + (Math.random() - 0.5) * 0.5;
+                const dist = 60 + Math.random() * 100;
+                const tx = Math.cos(angle) * dist;
+                const ty = Math.sin(angle) * dist;
+                const size = 3 + Math.random() * 7;
+                const duration = 0.5 + Math.random() * 0.5;
+                p.style.setProperty('--tx', tx + 'px');
+                p.style.setProperty('--ty', ty + 'px');
+                p.style.setProperty('--duration', duration + 's');
+                p.style.width = size + 'px';
+                p.style.height = size + 'px';
+                p.style.background = colors[Math.floor(Math.random() * colors.length)];
+                p.style.boxShadow = '0 0 ' + (size * 2) + 'px ' + p.style.background;
+                zone.appendChild(p);
+                setTimeout(() => p.remove(), duration * 1000);
+            }
+
+            // 4. Rising sparkles (15 glitter)
+            const sparkleChars = ['✦', '✧', '⭑', '✴', '✶', '⬡'];
+            for (let i = 0; i < 15; i++) {
+                const s = document.createElement('div');
+                s.className = 'sparkle';
+                s.innerText = sparkleChars[Math.floor(Math.random() * sparkleChars.length)];
+                const x = 20 + Math.random() * 60;
+                const rise = -(80 + Math.random() * 180);
+                const rot = -90 + Math.random() * 180;
+                const duration = 0.8 + Math.random() * 0.7;
+                const delay = Math.random() * 0.3;
+                s.style.left = x + '%';
+                s.style.top = '50%';
+                s.style.setProperty('--rise', rise + 'px');
+                s.style.setProperty('--rot', rot + 'deg');
+                s.style.setProperty('--duration', duration + 's');
+                s.style.animationDelay = delay + 's';
+                s.style.color = colors[Math.floor(Math.random() * colors.length)];
+                s.style.textShadow = '0 0 8px ' + s.style.color;
+                s.style.fontSize = (12 + Math.random() * 14) + 'px';
+                zone.appendChild(s);
+                setTimeout(() => s.remove(), (duration + delay) * 1000);
+            }
         }
 
         let fistFrameCount = 0;         // Counter frame genggam berturut-turut
