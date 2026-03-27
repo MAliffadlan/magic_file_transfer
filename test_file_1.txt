@@ -1,0 +1,2 @@
+Halo bos alif! Ini adalah file percobaan yang dikirim lewat terminal untuk mengetes program penerima file ajaib kita.
+Kalau bos alif bisa membaca pesan ini, berarti Tahap 1 SUKSES BESAR!

@@ -1,7 +1,7 @@
 import os
 import subprocess
 import socket
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
@@ -30,6 +30,10 @@ def get_local_ip():
     finally:
         s.close()
     return IP
+
+@app.route('/')
+def index():
+    return render_template('index.html')
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
@@ -70,10 +74,10 @@ if __name__ == '__main__':
     print("\\n" + "="*50)
     print("🚀 MAGIC RECEIVER AKTIF! 🚀")
     print("="*50)
-    print(f"Server berjalan di  : http://{local_ip}:{port}")
+    print(f"Server berjalan di  : https://{local_ip}:{port}")
     print(f"Lokasi penyimpanan: {UPLOAD_FOLDER}")
     print("="*50)
     print("Menunggu file dilempar dari HP... (Tekan CTRL+C untuk berhenti)\\n")
     
-    # Menjalankan server di 0.0.0.0 agar bisa diakses alat lain dalam WiFi lokal
-    app.run(host='0.0.0.0', port=port, debug=False)
+    # Menjalankan server di 0.0.0.0 dengan fitur HTTPS (adhoc) agar kamera mendeteksi koneksi aman
+    app.run(host='0.0.0.0', port=port, ssl_context='adhoc', debug=False)

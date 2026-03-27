@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magic File Sender</title>
+    <!-- CSS Sederhana (Dark Mode) -->
+    <style>
+        body { margin: 0; background: #121212; color: #E0E0E0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; }
+        h1 { color: #82B1FF; margin-top: 20px; }
+        .container { padding: 20px; }
+        video { display: none; }
+        /* Tampilan Kamera di Browser */
+        canvas { 
+            width: 100%; max-width: 480px; height: auto; 
+            border-radius: 16px; margin: 15px auto; 
+            box-shadow: 0 8px 24px rgba(0,0,0,0.8); 
+            transform: scaleX(-1); /* Efek Cermin (Mirror) */
+        }
+        .controls { margin: 20px; background: #1E1E1E; padding: 20px; border-radius: 12px; display: inline-block;}
+        .status { font-size: 20px; font-weight: bold; margin-bottom: 15px; color: #9E9E9E; padding: 10px; border-radius: 8px;}
+        input[type="file"] { padding: 10px; background: #333; color: white; border-radius: 6px; border: 1px solid #555;}
+    </style>
+
+    <!-- Library AI dari Google MediaPipe via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>🪄 Magic File Sender</h1>
+        <p>Akses halaman ini dari HP Android (Chrome), pilih file, lalu "Genggam & Buka" tangan ke kamera untuk melempar file ke Laptop Linux!</p>
+
+        <div class="controls">
+            <div id="status_box" class="status">Status: Menunggu File... 📄</div>
+            <input type="file" id="file_input">
+        </div>
+
+        <!-- Tersembunyi, hanya untuk menangkap video mentah -->
+        <video id="input_video" autoplay playsinline></video>
+        <!-- Canvas untuk memunculkan video + garis skeleton tangan -->
+        <canvas id="output_canvas" width="640" height="480"></canvas>
+    </div>
+
+    <!-- Script Utama (Logic AI dan Kirim File) -->
+    <script>
+        const videoElement = document.getElementById('input_video');
+        const canvasElement = document.getElementById('output_canvas');
+        const canvasCtx = canvasElement.getContext('2d');
+        const fileInput = document.getElementById('file_input');
+        const statusBox = document.getElementById('status_box');
+
+        let fileToUpload = null;
+        let isFistGrabbed = false;
+        let isUploading = false;
+
+        // Mendeteksi Bos Alif memilih file
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                fileToUpload = e.target.files[0];
+                updateStatus("File Dipilih! Genggam Kamera lalu 'Lempar' (Buka Jari) ✊👉🖐️", "#FFC107");
+            }
+        });
+
+        function updateStatus(text, color) {
+            statusBox.innerText = "Status: " + text;
+            statusBox.style.color = color;
+        }
+
+        // Rumus sederhana menghitung Jarak Titik di Layar (P1 ke P2)
+        function calcDistance(p1, p2) {
+            return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
+        }
+
+        // Fungsi mengecek pola pergerakan "Genggam"
+        function detectGesture(landmarks) {
+            if (!fileToUpload || isUploading) return;
+
+            // Titik acuan anatomi tangan (Landmarks MediaPipe)
+            const wrist = landmarks[0]; // Pergelangan
+            const palmBase = landmarks[9]; // Pangkal jari tengah (tengah telapak tangan)
+            const indexTip = landmarks[8]; // Ujung telunjuk
+            const middleTip = landmarks[12]; // Ujung jari tengah
+            
+            // Jarak antara telunjuk/jari tengah ke pergelangan
+            const distIndex = calcDistance(wrist, indexTip);
+            const distMiddle = calcDistance(wrist, middleTip);
+            
+            // Mengukur seberapa panjang telapak tangannya bos alif
+            const palmSize = calcDistance(wrist, palmBase);
+
+            // LOGIKA GENGGAM KEPAL:
+            // Jika jari ditekuk, ujung jari akan mendekat ke pergelangan. (Jaraknya < 1.4x panjang telapak)
+            const isFist = (distIndex < palmSize * 1.4) && (distMiddle < palmSize * 1.4);
+
+            if (isFist) {
+                // Posisi: Mengepal ✊
+                if (!isFistGrabbed) {
+                    isFistGrabbed = true; // Kunci status sedang digenggam
+                    updateStatus("TERGENGGAM! ✊ Buka tangan ke depan untuk melempar!", "#2196F3");
+                }
+            } else {
+                // Posisi: Terbuka 🖐️
+                if (isFistGrabbed) {
+                    isFistGrabbed = false; // Tangan terbuka, lepaskan kuncian
+                    // Eksekusi fungsi Lempar/Kirim!
+                    executeMagicThrow();
+                }
+            }
+        }
+
+        function executeMagicThrow() {
+            isUploading = true;
+            updateStatus("MELEMPAR FILE... 🚀", "#FF9800");
+            
+            const formData = new FormData();
+            formData.append("file", fileToUpload);
+            
+            // Proses Upload ke Server Flask
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                updateStatus("SUKSES DIKIRIM KE LINUX MINT! 🎉", "#4CAF50");
+                fileInput.value = ""; // Kosongkan
+                fileToUpload = null;
+                setTimeout(() => {
+                    isUploading = false;
+                    updateStatus("Menunggu File Selanjutnya... 📄", "#9E9E9E");
+                }, 4000);
+            })
+            .catch(error => {
+                updateStatus("GAGAL TERKIRIM (Jaringan Error?) ❌", "#F44336");
+                isUploading = false;
+            });
+        }
+
+        // Hasil tangkapan AI MediaPipe mendarat di sini
+        function onResults(results) {
+            // Bersihkan kanvas sebelumnya
+            canvasCtx.save();
+            canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+            // Salin video kamera mentah ke kanvas
+            canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
+            
+            // Jika ada tangan TERTANGKAP di layar
+            if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+                for (const landmarks of results.multiHandLandmarks) {
+                    // Gambar kerangka (tulang hijau)
+                    drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {color: '#00FF00', lineWidth: 5});
+                    // Gambar titik ujung (titik merah)
+                    drawLandmarks(canvasCtx, landmarks, {color: '#FF0000', lineWidth: 2});
+                    
+                    // Deteksi pose
+                    detectGesture(landmarks);
+                }
+            }
+            canvasCtx.restore();
+        }
+
+        // Inisialisasi AI Google
+        const hands = new Hands({locateFile: (file) => {
+            return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
+        }});
+        hands.setOptions({
+            maxNumHands: 1, // Hanya peduli 1 tangan (tangan pelempar)
+            modelComplexity: 1, // Akurasi tinggi
+            minDetectionConfidence: 0.6,
+            minTrackingConfidence: 0.6
+        });
+        hands.onResults(onResults);
+
+        // Nyalakan Kamera Depan/Komputer
+        const camera = new Camera(videoElement, {
+            onFrame: async () => {
+                // Lempar setiap frame kamera ke AI untuk dibaca
+                await hands.send({image: videoElement});
+            },
+            width: 640,
+            height: 480
+        });
+        camera.start().catch(err => {
+            updateStatus("GAGAL MENGAKSES KAMERA: " + err.message, "#F44336");
+        });
+    </script>
+</body>
+</html>
