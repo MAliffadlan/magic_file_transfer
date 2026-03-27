@@ -1,44 +1,51 @@
 <div align="center">
-  <h1>🪄 Magic Send v2</h1>
-  <p>Transfer file dari Smartphone Android langsung ke Desktop dengan menggunakan Gerakan Tangan (Hand Gestures) bak seorang penyihir.</p>
+  <img src="icon-512.png" width="120" alt="Magic Send Icon" style="border-radius: 20px; box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);" />
+  <h1>🪄 Magic Send v2 - *The Seamless Spell*</h1>
+  <p><b>Pindahkan file dari Smartphone Android langsung ke Desktop secepat kilat dengan Gerakan Tangan Sihir (AI Hand Gestures).</b></p>
+
+  [![Python](https://img.shields.io/badge/Python-3.8%2B-blue?style=for-the-badge&logo=python)](https://python.org)
+  [![Flask](https://img.shields.io/badge/Flask-Server-black?style=for-the-badge&logo=flask)](https://flask.palletsprojects.com/)
+  [![Google MediaPipe](https://img.shields.io/badge/Google-MediaPipe-orange?style=for-the-badge&logo=google)](https://mediapipe.dev/)
+  [![PWA Ready](https://img.shields.io/badge/PWA-Ready-green?style=for-the-badge&logo=pwa)](https://web.dev/progressive-web-apps/)
 </div>
 
 ---
 
-## 🌟 Fitur Unggulan
+## ⚡ Fitur Utama yang Gila-gilaan Keren
 
-- **Native Share Integration**: Terintegrasi seketika dengan menu "Bagikan / Share Target" sistem operasional mutlak OS Android sebagai Aplikasi *Progressive Web App (PWA)* mandiri.
-- **AI Hand Tracking**: Menangkap gerakan genggaman (Tarik) ✊ dan lemparan (Dorong) 🖐️ secara *real-time* dan responsif menggunakan **Google MediaPipe AI**.
-- **Dark Mode UI**: Antarmuka premium yang modern nan "gaib" *(kamera tersembunyi)*. 
-- **No-Install Desktop (Backend)**: Laptop Anda murni hanya menjalankan *script* Python tunggal (Flask server), tanpa *driver* aneh-aneh.
-- **Desktop Notifications**: File mendarat dan laptop Anda merespon instan dengan kotak dialog OS (*`notify-send`* untuk Linux).
-
----
-
-## ⚙️ Persyaratan Kebutuhan
-
-1. **Laptop / Desktop (Sebagai Penerima)**
-   - Punya **Python 3.8+**
-   - Jaringan area lokal / Wi-Fi bersama.
-   - OS Linux / Ubuntu / Mint (Untuk fitur native *Pop-up notify-send* yang *out-of-the-box*).
-2. **Smartphone Android (Sebagai Tongkat Sihir/Pengirim)**
-   - Aplikasi peramban Google Chrome minimum versi modern (76+).
-   - Kamera Selfie yang berfungsi untuk deteksi wajah AI!
+*   📲 **Integrasi Native PWA Android**: Masuk langsung ke menu "Share" bawaan HP. Ngga pusing mikirin IP/Browser lagi!
+*   🤖 **Smart AI Hand Tracking v2**: Mendeteksi 4 jari Anda dengan presisi. Dilengkapi fitur *Anti-False Trigger*, *Cooldown*, dan *Hold Duration*. (Powered by Google MediaPipe)
+*   🎶 **Sihir Interaktif (UX Engine)**: Rasakan getaran (Haptic Feedback), suara "ngung-ngung" Synth Wave saat mulai Charge Sihir, dan animasi terbang langsung di browser Anda.
+*   💻 **Auto-Open di Desktop**: Lempar foto? Langsung buka otomatis! Lempar video? Langsung play tanpa basa-basi! (Via `xdg-open` di Linux)
+*   🔔 **Notifikasi Desktop OS**: PC Anda langsung merespon seketika dari sudut layar.
+*   🕵️‍♂️ **Spy Mode UI Terlarang**: Antarmuka *Dark Mode* mewah tapi kameranya *hidden*. Anda dikira lagi pegang remote ajaib, padahal ada AI yang ngintip pergerakan jari Anda.
 
 ---
 
-## 🚀 Instalasi Sistem
+## 🛠️ Persyaratan Tempur
 
-### 1. Menyiapkan Penangkap (Server)
+1.  **Laptop / Desktop Linux Mint / Ubuntu (Sebagai Penerima/Server)**
+    *   Python 3.8+
+    *   Satu Jaringan Wi-Fi (Atau jalankan `cloudflared`)
+    *   Fitur `notify-send` & `xdg-open` (Bawaan Linux).
+2.  **Smartphone Android (Tongkat Sihirnya)**
+    *   Google Chrome versi modern (76+)
+    *   Kamera Depan Normal.
 
-Unduh (*clone*) kode ini ke mesin Linux Anda:
+---
+
+## 🚀 Instalasi: Semudah Menjentikkan Jari
+
+### Tahap 1: Mantra di Laptop
+
+Unduh (*clone*) kode sihir misterius ini ke Linux Anda:
 
 ```bash
 git clone https://github.com/MAliffadlan/magic_file_transfer.git
 cd magic_file_transfer
 ```
 
-Instalasi obat ketergantungannya (Dependencies):
+Install bahan baku ramuan:
 
 ```bash
 pip install -r requirements.txt
@@ -50,35 +57,36 @@ Nyalakan mesin penangkap sihir:
 python3 receiver.py
 ```
 
-### 2. Rahasia Jalur Aman (PWA Butuh HTTPS!)
-Sistem Android masa kini sangat ketat; dilarang keras meng-install `PWA` penangkap file ke dalam HP dari IP address lokal `http://192.168.x.x`. Solusi mujarabnya? Gunakan sambungan VPN/Tunnel ajaib dari internet resmi:
+### Tahap 2: Buat Lingkaran Sihir Online (HTTPS PWA)
+Agar ilmu hitam *(Service Worker)* ini lolos ke HP tanpa diblok keamanan Chrome, sambungkan Laptop ke lorong internet publik pakai [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/downloads/):
 
-**Cara Jitu Cloudflare Tunnel:**
-Buka *terminal* satu lagi bersebelahan dengan server, lalu jalankan terowongan `cloudflared`:
+Jalankan perintah ini di tab terminal sampingnya:
 ```bash
 cloudflared tunnel --url http://127.0.0.1:5050
 ```
-Ambil tautan (URL) ujung-nya yang mengandung ekstensi `.trycloudflare.com`.
+*(Copy URL `https://xxxx.trycloudflare.com` yang dikasih ya!)*
 
-### 3. Eksekusi Pengunduhan Pada Handphone
-1. Buka URL rahasia `.trycloudflare.com` itu langsung dari Google Chrome Handphone.
-2. Di layar akan tertulis dengan menakjubkan **"📲 Install Aplikasi"**. Tinggal sentuh!
-3. Aplikasi akan tercatat sebagai **"Magic v2"** di jajaran ikon menu layar beranda (Home Screen) layaknya aplikasi Play Store.
+### Tahap 3: Pemasangan Tongkat di Android
+1.  Buka Link Tadi dari HP.
+2.  Akan muncul tombol **📲 Install Aplikasi**. Pencet dan tunggu.
+3.  Sekarang aplikasi "Magic v2" sudah bertengger gagah di *App Drawer* HP Anda!
+
+---
+
+## 🪄 Kelas Praktik Sihir 101
+
+1. Buka **Galeri** (Foto/Video Favorit) di HP Android Anda.
+2. Centang file yang ingin dikirim, tap tombol **Bagikan (Share)**.
+3. Cari **Magic v2** dari deretan aplikasi (sebelahan sama WhatsApp/IG).
+4. Layar PWA akan menyambut dengan warna Hijau (Tanda file sudah tertangkap rohani-nya).
+5. **JURUS RAHASIA: Arahkan layar HP ke muka Anda, lalu pada kamera depan...**
+    *   **✊ Charge (Genggam Erat):** Layar merespon, HP bergetar tipis, speaker bunyi *wuzzz*. Tahan 1 detik sampai siap.
+    *   **🖐️ Lontarkan Jari (Buka Tangan Mendadak):** Suara mendesing, Animasi file terbang melesat di layar HP Anda!
+6. **BAM!** File sukses tertransfer instan ke PC Anda, Notifikasi Desktop muncul, dan filenya langsung terbuka tanpa disentuh! 😱
 
 ---
 
-## 🪄 Merapal Mantra dan Sihir
-1. Jelajahi laci kenangan (Galeri Fotografi) dalam Handphone Anda.
-2. Temukan foto, video langka yang mau disalurkan, sentuh fitur/tombol **Bagikan (Share)** milik ponsel.
-3. Di dalam roda deretan Aplikasi (seperti saat akan share ke WhatsApp/Tiktok), cari satria pahlawan kita: Aplikasi Bernama **Magic v2**.
-4. Terhantam masuk langsung ke Aplikasi Kamera Terselubung, dan Spanduk Hijau Berkedip siap menantang kemampuan Lemparan Batin Anda.
-5. Sorot Tangan Ke Depan Posisi Kamera HP Sembarang (Kamera Depan menyala tanpa nampak di mata):
-   - **Tarik & Genggam Mengepal Penuh ✊:** Sistem bersiap melakukan inisialisasi dorongan sihir.
-   - **Buka Kelima Jari Lebar Mendadak Ke Depan 🖐️:** Lempar secara reflek dengan satu gerakan spontan!
-6. Wushhh... Layar mengatakan SIAP, tak lama kemudian Linux PC anda akan bergetar girang menyambut kedatangan *File* Anda di kandang `Documents/share_file`.
+### Momen "Wah" (WOW Factor):
+Bukan sembarang file transfer, proyek ini fokus totalitas di *User Experience*. Mulai dari *Micro-animations* (animasi dashed-line berkedip saat siap), *Auditory Feedback* (tanpa file audio sama sekali - murni disintetis oleh Web Audio API `AudioContext`), sampai taktil getar saat jari bergerak. Semuanya bikin sistem transfer sepele jadi terasa hidup.
 
-### 💡 Fakta Unik
-Ketika Anda terlalu bosan menggunakan lemparan sulap atau ada gangguan jaringan (Cache Google Chrome macet di awang-awang), File yang dibagikan dari Web Share akan otomatis disemprotkan terbang "By-Pass" ke Laptop Anda langsung tanpa basa-basi (Fallback Server Feature Terbaru!)
-
----
-*Ditenun sepenuh hati siang & malam dengan bangga mendalam oleh Sang Arsitek (Bos Alif).*
+> Dirakit penuh ambisi dan tanpa tidur oleh **@MAliffadlan (Bos Alif)**. Bintangnya GitHub jangan dilupa Bos! ⭐
