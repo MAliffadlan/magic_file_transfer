@@ -100,6 +100,24 @@
             100% { transform: scale(1) translateX(0); opacity: 1; }
         }
 
+        /* ===== Flying File Animation ===== */
+        @keyframes flyAway {
+            0% { transform: translateY(0) scale(1) rotate(0deg); opacity: 1; }
+            50% { transform: translateY(-150px) scale(0.8) rotate(15deg); opacity: 0.8; }
+            100% { transform: translateY(-300px) scale(0.2) rotate(45deg); opacity: 0; }
+        }
+        .flying-file {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-top: -30px;
+            margin-left: -30px;
+            font-size: 60px;
+            animation: flyAway 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            pointer-events: none;
+            z-index: 100;
+        }
+
         /* ===== Instruksi di dalam Zone ===== */
         .gesture-title {
             font-size: 1.1em;
@@ -348,6 +366,76 @@
             OPEN_CONSECUTIVE: 5,        // Buka tangan harus stabil 5 frame
         };
 
+        // ========== SFX & VIBRATION ENGINE ==========
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const audioCtx = new AudioContext();
+
+        function playSound(type) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            try {
+                const osc = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                osc.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                
+                if (type === 'grab') {
+                    // Bunyi "Wush" saat mulai menggenggam
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.1);
+                    gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+                    gainNode.gain.linearRampToValueAtTime(0.2, audioCtx.currentTime + 0.05);
+                    gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.15);
+                    osc.start(audioCtx.currentTime);
+                    osc.stop(audioCtx.currentTime + 0.15);
+                } else if (type === 'arm') {
+                    // Bunyi "Tiimm" saat siap dilempar (1 detik)
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+                    gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+                    gainNode.gain.linearRampToValueAtTime(0.1, audioCtx.currentTime + 0.05);
+                    gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.2);
+                    osc.start(audioCtx.currentTime);
+                    osc.stop(audioCtx.currentTime + 0.2);
+                } else if (type === 'throw') {
+                    // Bunyi "Ziiing" roket terbang
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(2000, audioCtx.currentTime + 0.3);
+                    gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+                    gainNode.gain.linearRampToValueAtTime(0.3, audioCtx.currentTime + 0.05);
+                    gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.4);
+                    osc.start(audioCtx.currentTime);
+                    osc.stop(audioCtx.currentTime + 0.4);
+                } else if (type === 'success') {
+                    // Bunyi "Ting-Ting" sukses
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+                    osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); // E5
+                    osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2); // G5
+                    gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+                    gainNode.gain.linearRampToValueAtTime(0.2, audioCtx.currentTime + 0.05);
+                    gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.4);
+                    osc.start(audioCtx.currentTime);
+                    osc.stop(audioCtx.currentTime + 0.4);
+                }
+            } catch (e) {
+                console.log("Audio API Error", e);
+            }
+        }
+
+        function triggerVibrate(pattern) {
+            if (navigator.vibrate) navigator.vibrate(pattern);
+        }
+
+        function createFlyingAnimation() {
+            const el = document.createElement('div');
+            el.innerText = '📄';
+            el.className = 'flying-file';
+            document.getElementById('gestureZone').appendChild(el);
+            setTimeout(() => el.remove(), 800);
+        }
+
         let fistFrameCount = 0;         // Counter frame genggam berturut-turut
         let openFrameCount = 0;         // Counter frame buka berturut-turut
         let fistConfirmed = false;      // Genggaman sudah dikonfirmasi (lolos MIN_CONSECUTIVE)
@@ -441,6 +529,8 @@
                     fistGrabTime = now;
                     setZoneState('grabbing', '✊', 'Tahan genggaman...');
                     updateStatus('✊ Terdeteksi! Tahan genggaman 1 detik...', '#3b82f6');
+                    playSound('grab');
+                    triggerVibrate([50]);
                 }
 
                 // Tahap 2: Cek hold duration
@@ -448,6 +538,8 @@
                     throwArmed = true;
                     setZoneState('grabbing', '✊', 'SIAP! Buka tangan sekarang!');
                     updateStatus('🔥 SIAP DILEMPAR! Buka tangan sekarang! 🖐️', '#f97316');
+                    playSound('arm');
+                    triggerVibrate([100, 50, 100]);
                 }
 
             } else {
@@ -479,6 +571,11 @@
             isUploading = true;
             setZoneState('throwing', '🚀', 'Melempar...');
             updateStatus('🚀 MELEMPAR FILE KE LAPTOP...', '#f97316');
+            
+            // Efek UX Sihir
+            playSound('throw');
+            triggerVibrate([200]); 
+            createFlyingAnimation();
 
             if (pendingFileId) {
                 fetch('/throw/' + pendingFileId, { method: 'POST' })
@@ -487,6 +584,8 @@
                         setZoneState('success', '✅', 'Berhasil Mendarat!');
                         fileName.innerText = data.filename;
                         updateStatus('🎉 ' + data.filename + ' berhasil mendarat di laptop!', '#22c55e');
+                        playSound('success');
+                        triggerVibrate([50, 50, 50, 50]);
                         pendingFileId = null;
                         setTimeout(resetUI, 5000);
                     })
@@ -503,6 +602,8 @@
                     .then(data => {
                         setZoneState('success', '✅', 'Berhasil Mendarat!');
                         updateStatus('🎉 ' + data.filename + ' berhasil mendarat di laptop!', '#22c55e');
+                        playSound('success');
+                        triggerVibrate([50, 50, 50, 50]);
                         fileInput.value = "";
                         fileToUpload = null;
                         setTimeout(resetUI, 5000);
