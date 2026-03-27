@@ -1,4 +1,4 @@
-const CACHE_NAME = 'magic-cache-v7';
+const CACHE_NAME = 'magic-cache-v8';
 
 self.addEventListener('install', event => {
   self.skipWaiting();

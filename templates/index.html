@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Magic File Sender</title>
     <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#0a0a0f">
+    <meta name="theme-color" content="#000000">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
         body { 
-            background: #0a0a0f; 
+            background: #000000; 
             color: #e0e0e0; 
             font-family: 'Inter', -apple-system, sans-serif; 
             text-align: center;
@@ -30,9 +30,7 @@
         .header h1 {
             font-size: 1.6em;
             font-weight: 800;
-            background: linear-gradient(135deg, #a855f7, #6366f1, #3b82f6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: #ffffff;
             letter-spacing: -0.5px;
         }
         .header p {
@@ -54,9 +52,9 @@
             position: relative;
         }
         .gesture-zone.active {
-            border-color: #a855f7;
-            background: rgba(168, 85, 247, 0.05);
-            box-shadow: 0 0 40px rgba(168, 85, 247, 0.1);
+            border-color: #ffffff;
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 0 40px rgba(255, 255, 255, 0.1);
         }
         .gesture-zone.file-ready {
             border-color: #22c55e;
@@ -146,8 +144,8 @@
             width: 28px;
             height: 28px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #a855f7, #6366f1);
-            color: white;
+            background: #ffffff;
+            color: #000000;
             display: flex;
             align-items: center;
             justify-content: center;
