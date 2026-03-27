@@ -23,7 +23,7 @@ def show_notification(filename):
     """Menampilkan notifikasi desktop di Linux Mint"""
     try:
         subprocess.run(['notify-send', '-i', 'document-save',
-                        'Magic File Received!',
+                        'Fadlan Send - File Received!',
                         f'File berhasil ditangkap dari HP:\n{filename}'], check=True)
     except Exception as e:
         print(f"[-] Gagal menampilkan notifikasi desktop: {e}")
@@ -174,7 +174,7 @@ if __name__ == '__main__':
     port = 5050
 
     print("\n" + "="*50)
-    print("🚀 MAGIC RECEIVER AKTIF! 🚀")
+    print("🚀 FADLAN SEND AKTIF! 🚀")
     print("="*50)
     print(f"Server berjalan di  : http://{local_ip}:{port}")
     print(f"Lokasi penyimpanan  : {UPLOAD_FOLDER}")
