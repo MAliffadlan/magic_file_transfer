@@ -9,6 +9,16 @@
   [![PWA](https://img.shields.io/badge/PWA-Ready-5A0FC8?style=for-the-badge&logo=pwa&logoColor=white)](https://web.dev/progressive-web-apps/)
 </div>
 
+<div align="center">
+  <h3>🎬 Demo</h3>
+  <p><i>Lihat betapa ajaibnya transfer file hanya dengan gerakan tangan!</i></p>
+
+  <video src="assets/demo.mp4" controls width="300" style="border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);"></video>
+  
+  <br><br>
+  <blockquote>✊ Genggam → 🖐️ Buka → 💥 File mendarat di laptop!</blockquote>
+</div>
+
 ---
 
 ## ⚡ Kenapa Fadlan Send?
