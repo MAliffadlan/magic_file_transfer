@@ -1,13 +1,23 @@
 <div align="center">
   <img src="icon-512.png" width="120" alt="Fadlan Send Icon" />
   <h1>🪄 Fadlan Send</h1>
-  <p><b>Transfer file dari HP Android ke Laptop dalam sekejap mata — cukup dengan gerakan tangan.</b></p>
 
   [![Python](https://img.shields.io/badge/Python-3.8+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
   [![Flask](https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
   [![MediaPipe](https://img.shields.io/badge/MediaPipe-AI-FF6F00?style=for-the-badge&logo=google&logoColor=white)](https://mediapipe.dev/)
   [![PWA](https://img.shields.io/badge/PWA-Ready-5A0FC8?style=for-the-badge&logo=pwa&logoColor=white)](https://web.dev/progressive-web-apps/)
+  <br>
+  [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+  [![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen?style=for-the-badge&logo=github)](https://github.com/MAliffadlan/magic_file_transfer)
+  [![Stars](https://img.shields.io/github/stars/MAliffadlan/magic_file_transfer?style=for-the-badge&color=yellow&logo=github)](https://github.com/MAliffadlan/magic_file_transfer/stargazers)
 </div>
+
+<div align="center">
+  <h3>🌐 Language / Bahasa</h3>
+  <a href="#-bahasa-indonesia">🇮🇩 Bahasa Indonesia</a> · <a href="#-english">🇬🇧 English</a>
+</div>
+
+---
 
 <div align="center">
   <h3>🎬 Demo</h3>
@@ -15,12 +25,15 @@
   <img src="assets/demo.gif" width="300" style="border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);" alt="Demo Fadlan Send" />
 </div>
 
+---
+
+# 🇮🇩 Bahasa Indonesia
+
+<p align="center"><b>Transfer file dari HP Android ke Laptop dalam sekejap mata — cukup dengan gerakan tangan.</b></p>
+
 <div align="center">
-  <br><br>
   <blockquote>✊ Genggam → 🖐️ Buka → 💥 File mendarat di laptop!</blockquote>
 </div>
-
----
 
 ## ⚡ Kenapa Fadlan Send?
 
@@ -161,5 +174,163 @@ fadlan-send/
 ---
 
 <div align="center">
-  <sub>Dibuat dengan ☕ dan begadang oleh <a href="https://github.com/MAliffadlan"><b>@MAliffadlan</b></a></sub>
+  <a href="#-language--bahasa">⬆️ Kembali ke atas</a>
+</div>
+
+---
+
+# 🇬🇧 English
+
+<p align="center"><b>Transfer files from your Android phone to your Laptop in the blink of an eye — using nothing but hand gestures.</b></p>
+
+<div align="center">
+  <blockquote>✊ Clench → 🖐️ Open → 💥 File lands on your laptop!</blockquote>
+</div>
+
+## ⚡ Why Fadlan Send?
+
+Tired of plugging in USB cables? Don't want to open WhatsApp Web just to send a single photo? **Fadlan Send** is a file transfer solution that's *truly* magical:
+
+> Pick a photo in Gallery → Share to Fadlan Send → Clench your fist ✊ → Open your fingers 🖐️ → **BAM!** File instantly appears on your laptop screen.
+
+No cables. No login. No heavy apps. Just your **bare hands**.
+
+---
+
+## 🌟 Features
+
+### 🤖 Smart AI Gesture Engine v2
+- Detects **4 fingers simultaneously** (index, middle, ring, pinky) for precise fist recognition
+- **Anti False Trigger** — must be detected for 8 consecutive frames
+- **Hold Duration** — fist must be held for at least 1 second before throwing
+- **3-second Cooldown** — prevents accidental duplicate sends
+- **Open Validation** — open hand must be stable for 5 frames to be considered valid
+
+### 📲 Native Android Share Integration (PWA)
+- Installs like a regular app on your phone's Home Screen
+- Appears directly in Android's native **"Share"** menu (right alongside WhatsApp, Telegram, etc.)
+- File is captured by the server instantly — no need to re-select
+
+### 🎶 Immersive UX Feedback
+- **Sound Effects** — synthesized sounds generated directly in the browser via Web Audio API (no audio files needed!)
+  - *Whoosh* when you start clenching
+  - *Teem* when the fist locks in (armed)
+  - *Zwoom* when throwing
+  - *Ting-ting* upon successful landing
+- **Haptic Vibration** — phone vibrates in sync with each gesture stage
+- **Flying Animation** — a 📄 icon flies across the screen when the file is thrown
+
+### 💻 Auto-Open on Desktop
+Files that land on your laptop **open automatically** with the default application:
+
+| File Type | Opens With |
+|:---:|:---:|
+| 📸 Photo | Image Viewer |
+| 🎬 Video | Video Player |
+| 📄 PDF | Document Reader |
+| 🎵 Audio | Music Player |
+| 📝 Text | Text Editor |
+
+### 🔔 Desktop Notification
+An OS notification appears instantly in the corner of your laptop screen every time a file is successfully received.
+
+### 🕵️ Hidden Camera Mode
+The camera is active in the background but **completely invisible in the UI**. The interface stays clean — just an elegant dashed-border instruction box.
+
+---
+
+## 🛠️ System Requirements
+
+**Laptop / Desktop (Receiver)**
+- Python 3.8+
+- Linux (Mint / Ubuntu / Debian) — for `notify-send` & `xdg-open`
+- Same Wi-Fi network as your phone
+
+**Android Smartphone (Sender)**
+- Google Chrome 76+
+- Working front camera
+
+---
+
+## 🚀 Installation
+
+### 1. Clone & Install
+
+```bash
+git clone https://github.com/MAliffadlan/magic_file_transfer.git
+cd magic_file_transfer
+pip install -r requirements.txt
+```
+
+### 2. Start the Server
+
+```bash
+python3 receiver.py
+```
+
+### 3. Create an HTTPS Tunnel (Required for PWA)
+
+PWA on Android **requires HTTPS**. Use [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/):
+
+```bash
+cloudflared tunnel --url http://127.0.0.1:5050
+```
+
+Note the `https://xxxx.trycloudflare.com` URL that appears.
+
+### 4. Install on Android Phone
+
+1. Open the Cloudflare link in Chrome on your phone
+2. Tap the **📲 Install App** button
+3. **Fadlan Send** is now on your Home Screen!
+
+---
+
+## 🪄 How to Use
+
+```
+1. Open Gallery → Select a photo/video
+2. Tap "Share" → Choose "Fadlan Send"
+3. Green screen flash = file is ready
+4. Clench your fist ✊ in front of the camera → Hold for 1 second
+5. Status changes to "READY TO THROW!" 🔥
+6. Open your fingers wide 🖐️ → File flies to your laptop!
+7. File opens automatically on your laptop screen 🎉
+```
+
+---
+
+## 📁 Project Structure
+
+```
+fadlan-send/
+├── receiver.py          # Flask server (file receiver)
+├── templates/
+│   └── index.html       # Web UI + MediaPipe + Gesture Engine
+├── manifest.json        # PWA manifest (Share Target)
+├── sw.js                # Service Worker
+├── icon-192.png         # App icon 192x192
+├── icon-512.png         # App icon 512x512
+├── requirements.txt     # Python dependencies
+└── .gitignore
+```
+
+---
+
+## ⚠️ Important Notes
+
+- Cloudflare Tunnel URLs are **temporary** — they change on every restart. After restarting the tunnel, **uninstall & reinstall** the app on your phone.
+- For a permanent URL, use [Cloudflare Named Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/get-started/).
+- If the UI doesn't update after changes, clear your browser cache or reinstall the PWA.
+
+---
+
+<div align="center">
+  <a href="#-language--bahasa">⬆️ Back to top</a>
+</div>
+
+---
+
+<div align="center">
+  <sub>Made with ☕ and sleepless nights by <a href="https://github.com/MAliffadlan"><b>@MAliffadlan</b></a></sub>
 </div>
