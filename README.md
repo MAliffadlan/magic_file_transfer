@@ -25,6 +25,11 @@
   <img src="assets/demo.gif" width="300" style="border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);" alt="Demo Fadlan Send" />
 </div>
 
+<div align="center">
+
+<p>Alternatif: https://drive.google.com/file/d/19h_wNgkmquCCieGkJ1SjriyyexvwX4JB/view?usp=sharing</p>
+</div>
+
 ---
 
 # 🇮🇩 Bahasa Indonesia
