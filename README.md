@@ -13,7 +13,7 @@
   <h3>🎬 Demo</h3>
   <p><i>Lihat betapa ajaibnya transfer file hanya dengan gerakan tangan!</i></p>
 
-  <video src="assets/demo.mp4" controls width="300" style="border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);"></video>
+  <video src="https://github.com/MAliffadlan/magic_file_transfer/raw/main/assets/demo.mp4" controls="controls" muted="muted" style="max-height:640px; min-height: 200px" width="300"></video>
   
   <br><br>
   <blockquote>✊ Genggam → 🖐️ Buka → 💥 File mendarat di laptop!</blockquote>

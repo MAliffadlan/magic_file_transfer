@@ -334,6 +334,7 @@
     <div class="header">
         <h1>🪄 Fadlan Send</h1>
         <p>Transfer file ke laptop dengan gerakan tangan</p>
+        <p id="snapBadge" style="display:none; margin-top:8px; font-size:0.7em; color:#a855f7; background:rgba(168,85,247,0.1); border:1px solid rgba(168,85,247,0.3); padding:4px 12px; border-radius:20px; display:inline-block;">📸 SNAP MODE</p>
     </div>
 
     <!-- ===== GESTURE ZONE ===== -->
@@ -372,9 +373,13 @@
 
     <button id="installBtn">📲 Install Aplikasi</button>
 
-    <!-- Kamera & Canvas tersembunyi total -->
+    <!-- Kamera Depan (MediaPipe) & Canvas tersembunyi total -->
     <video id="input_video" autoplay playsinline></video>
     <canvas id="output_canvas" width="640" height="480"></canvas>
+
+    <!-- Kamera Belakang (Snap Capture) tersembunyi total -->
+    <video id="back_camera" autoplay playsinline></video>
+    <canvas id="snap_canvas" width="1280" height="720"></canvas>
 
     <div class="footer">Fadlan Send — Powered by MediaPipe AI</div>
 
@@ -406,6 +411,9 @@
         const videoElement = document.getElementById('input_video');
         const canvasElement = document.getElementById('output_canvas');
         const canvasCtx = canvasElement.getContext('2d');
+        const backCameraVideo = document.getElementById('back_camera');
+        const snapCanvas = document.getElementById('snap_canvas');
+        const snapCtx = snapCanvas.getContext('2d');
         const fileInput = document.getElementById('file_input');
         const statusBar = document.getElementById('statusBar');
         const gestureZone = document.getElementById('gestureZone');
@@ -418,6 +426,8 @@
         let fileToUpload = null;
         let pendingFileId = null;
         let isUploading = false;
+        let snapMode = false;  // Mode kamera jepret otomatis
+        let backCameraReady = false;  // Status kamera belakang
 
         // ========== SMART GESTURE ENGINE v2 ==========
         const GESTURE_CONFIG = {
@@ -605,13 +615,73 @@
             }
         });
 
+        // ========== MAGIC SNAP: Capture frame dari kamera BELAKANG ==========
+        function captureCameraFrame() {
+            return new Promise((resolve) => {
+                let sourceCanvas, sourceCtx;
+                
+                if (backCameraReady) {
+                    // Utama: Ambil dari kamera BELAKANG (HD)
+                    snapCanvas.width = backCameraVideo.videoWidth || 1280;
+                    snapCanvas.height = backCameraVideo.videoHeight || 720;
+                    snapCtx.drawImage(backCameraVideo, 0, 0, snapCanvas.width, snapCanvas.height);
+                    sourceCanvas = snapCanvas;
+                } else {
+                    // Fallback: Ambil dari canvas kamera depan (MediaPipe)
+                    sourceCanvas = canvasElement;
+                }
+                
+                sourceCanvas.toBlob((blob) => {
+                    if (blob) {
+                        const timestamp = Date.now();
+                        const snapFile = new File([blob], `magic_snap_${timestamp}.jpg`, { type: 'image/jpeg' });
+                        resolve(snapFile);
+                    } else {
+                        resolve(null);
+                    }
+                }, 'image/jpeg', 0.92);
+            });
+        }
+
+        function activateSnapMode() {
+            if (!snapMode) {
+                snapMode = true;
+                const badge = document.getElementById('snapBadge');
+                if (badge) badge.style.display = 'inline-block';
+                setZoneState('file-ready', '📸', 'Jepret & Lempar!');
+                gestureSteps.innerHTML = `
+                    <div class="step">
+                        <div class="step-num">1</div>
+                        <div class="step-text">Arahkan kamera ke target jepretan</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-num">2</div>
+                        <div class="step-text">Kepalkan tangan ✊ untuk jepret otomatis</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-num">3</div>
+                        <div class="step-text">Buka tangan 🖐️ untuk lempar ke laptop</div>
+                    </div>
+                `;
+                updateStatus('📸 Snap Mode aktif! Arahkan kamera & genggam untuk jepret', '#a855f7');
+            }
+        }
+
         // ========== SMART Gesture Detection ==========
         function calcDistance(p1, p2) {
             return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
         }
 
         function detectGesture(landmarks) {
-            if ((!fileToUpload && !pendingFileId) || isUploading) return;
+            if (isUploading) return;
+
+            // Jika tidak ada file bawaan & bukan snap mode, aktifkan snap mode otomatis
+            if (!fileToUpload && !pendingFileId && !snapMode) {
+                activateSnapMode();
+            }
+
+            // Harus punya file ATAU dalam snap mode untuk lanjut
+            if (!fileToUpload && !pendingFileId && !snapMode) return;
 
             // Cooldown check: jangan terima gesture kalau baru saja lempar
             const now = Date.now();
@@ -653,8 +723,24 @@
                 // Tahap 2: Cek hold duration
                 if (fistConfirmed && !throwArmed && (now - fistGrabTime >= GESTURE_CONFIG.HOLD_DURATION_MS)) {
                     throwArmed = true;
-                    setZoneState('grabbing', '✊', 'SIAP! Buka tangan sekarang!');
-                    updateStatus('🔥 SIAP DILEMPAR! Buka tangan sekarang! 🖐️', '#f97316');
+
+                    // MAGIC SNAP: Jika dalam snap mode, jepret frame saat ini!
+                    if (snapMode && !fileToUpload && !pendingFileId) {
+                        captureCameraFrame().then(snapFile => {
+                            if (snapFile) {
+                                fileToUpload = snapFile;
+                                gestureSteps.style.display = 'none';
+                                fileInfo.style.display = 'block';
+                                fileName.innerText = '📸 ' + snapFile.name;
+                                setZoneState('grabbing', '✊', 'FOTO DIAMBIL! Buka tangan!');
+                                updateStatus('📸🔥 Foto dijepret! Buka tangan untuk melempar! 🖐️', '#f97316');
+                            }
+                        });
+                    } else {
+                        setZoneState('grabbing', '✊', 'SIAP! Buka tangan sekarang!');
+                        updateStatus('🔥 SIAP DILEMPAR! Buka tangan sekarang! 🖐️', '#f97316');
+                    }
+
                     playSound('arm');
                     triggerVibrate([100, 50, 100]);
                 }
@@ -676,7 +762,9 @@
                     // Tangan dibuka tapi belum armed — reset
                     fistConfirmed = false;
                     fistFrameCount = 0;
-                    if (fileToUpload || pendingFileId) {
+                    if (snapMode) {
+                        setZoneState('file-ready', '📸', 'Jepret & Lempar!');
+                    } else if (fileToUpload || pendingFileId) {
                         setZoneState('file-ready', '✊', 'Genggam & Lempar!');
                     }
                 }
@@ -734,10 +822,21 @@
 
         function resetUI() {
             isUploading = false;
-            gestureSteps.style.display = 'flex';
             fileInfo.style.display = 'none';
-            setZoneState('', '🤚', 'Cara Menggunakan');
-            updateStatus('Menunggu file... 📄', '#555');
+
+            if (snapMode) {
+                // Kembali ke Snap Mode setelah sukses lempar
+                fileToUpload = null;
+                snapMode = false;  // Reset dulu agar activateSnapMode() bisa jalan lagi
+                gestureSteps.style.display = 'flex';
+                activateSnapMode();
+            } else {
+                gestureSteps.style.display = 'flex';
+                setZoneState('', '🤚', 'Cara Menggunakan');
+                updateStatus('Menunggu file... 📄', '#555');
+                const badge = document.getElementById('snapBadge');
+                if (badge) badge.style.display = 'none';
+            }
         }
 
         // ========== MediaPipe (Hidden) ==========
@@ -773,9 +872,24 @@
             height: 480
         });
         camera.start().then(() => {
-            if (!pendingId) updateStatus('📷 Kamera aktif. Pilih file untuk mulai!', '#666');
+            if (!pendingId) {
+                updateStatus('📷 Kamera aktif. Pilih file atau langsung genggam untuk jepret!', '#666');
+            }
         }).catch(err => {
             updateStatus('⚠️ Kamera tidak bisa diakses: ' + err.message, '#ef4444');
+        });
+
+        // ========== Inisialisasi Kamera Belakang (untuk Snap) ==========
+        navigator.mediaDevices.getUserMedia({
+            video: { facingMode: { exact: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } }
+        }).then(stream => {
+            backCameraVideo.srcObject = stream;
+            backCameraReady = true;
+            console.log('📸 Kamera belakang siap untuk Snap Mode!');
+        }).catch(err => {
+            console.warn('Kamera belakang tidak tersedia, Snap Mode akan pakai kamera depan:', err);
+            // Fallback: jika kamera belakang gagal, pakai canvas MediaPipe (kamera depan)
+            backCameraReady = false;
         });
     </script>
 </body>
