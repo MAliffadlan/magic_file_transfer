@@ -12,9 +12,9 @@
 <div align="center">
   <h3>🎬 Demo</h3>
   <p><i>Lihat betapa ajaibnya transfer file hanya dengan gerakan tangan!</i></p>
+  
+  <img src="assets/demo.gif" width="300" style="border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);" alt="Demo Fadlan Send" />
 </div>
-
-https://github.com/MAliffadlan/magic_file_transfer/raw/main/assets/demo.mp4
 
 <div align="center">
   <br><br>
