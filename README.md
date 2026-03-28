@@ -90,14 +90,22 @@ Notifikasi OS muncul instan di sudut layar laptop setiap kali file berhasil dite
 ### 🕵️ Hidden Camera Mode
 Kamera aktif di latar belakang tapi **tidak terlihat di UI** sama sekali. Tampilannya bersih, hanya kotak instruksi bergaris putus-putus yang elegan.
 
+### 🔒 Privacy First
+> **Privasi terjaga:** Pelacakan tangan diproses **100% lokal di perangkatmu** menggunakan MediaPipe. Tidak ada data kamera yang dikirim ke server. Kameramu, datamu.
+
 ---
 
 ## 🛠️ Kebutuhan Sistem
 
 **Laptop / Desktop (Penerima)**
 - Python 3.8+
-- Linux (Mint / Ubuntu / Debian) — untuk `notify-send` & `xdg-open`
 - Satu jaringan Wi-Fi dengan HP
+
+| OS | Status | Perintah Buka File |
+|:---:|:---:|:---:|
+| 🐧 Linux (Mint/Ubuntu/Debian) | ✅ Fully Supported | `xdg-open` + `notify-send` |
+| 🍎 macOS | 🚧 Coming Soon | `open` |
+| 🪟 Windows | 🚧 Coming Soon | `start` |
 
 **Smartphone Android (Pengirim)**
 - Google Chrome 76+
@@ -242,14 +250,22 @@ An OS notification appears instantly in the corner of your laptop screen every t
 ### 🕵️ Hidden Camera Mode
 The camera is active in the background but **completely invisible in the UI**. The interface stays clean — just an elegant dashed-border instruction box.
 
+### 🔒 Privacy First
+> **Privacy focused:** Hand tracking is processed **entirely on your device** using MediaPipe. No camera data is ever sent to the server. Your camera, your data.
+
 ---
 
 ## 🛠️ System Requirements
 
 **Laptop / Desktop (Receiver)**
 - Python 3.8+
-- Linux (Mint / Ubuntu / Debian) — for `notify-send` & `xdg-open`
 - Same Wi-Fi network as your phone
+
+| OS | Status | File Open Command |
+|:---:|:---:|:---:|
+| 🐧 Linux (Mint/Ubuntu/Debian) | ✅ Fully Supported | `xdg-open` + `notify-send` |
+| 🍎 macOS | 🚧 Coming Soon | `open` |
+| 🪟 Windows | 🚧 Coming Soon | `start` |
 
 **Android Smartphone (Sender)**
 - Google Chrome 76+
